@@ -10,7 +10,7 @@ public class MainView extends JFrame {
 
     private JTable stockTable;
     private DefaultTableModel tableModel;
-    private JPanel chartPanel;
+    private ChartPanel chartPanel;
     private JComboBox<String> symbolSelector;
     private JButton fetchButton;
 
@@ -47,24 +47,19 @@ public class MainView extends JFrame {
     }
 
     private void setupChart() {
-        chartPanel = new JPanel();
-        chartPanel.setLayout(new BorderLayout());
-        JLabel placeholder = new JLabel("Chart will be displayed here.", SwingConstants.CENTER);
-        placeholder.setFont(new Font("Arial", Font.PLAIN, 16));
-        chartPanel.add(placeholder, BorderLayout.CENTER);
+        chartPanel = new ChartPanel();
     }
 
     private void setupInputPanel() {
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
 
-        // シンボル選択ボックスの作成
         symbolSelector = new JComboBox<>(new String[]{"日経平均", "日米ドル", "Google"});
         fetchButton = new JButton("Fetch Stock Data");
 
         fetchButton.addActionListener(e -> {
             if (fetchListener != null) {
-                fetchListener.actionPerformed(e); // リスナーを呼び出し
+                fetchListener.actionPerformed(e);
             }
         });
 
@@ -104,11 +99,7 @@ public class MainView extends JFrame {
 
     public void updateChart(List<Double> prices, List<Long> timestamps) {
         SwingUtilities.invokeLater(() -> {
-            chartPanel.removeAll();
-            JPanel chart = createChart(prices, timestamps);
-            chartPanel.add(chart, BorderLayout.CENTER);
-            chartPanel.revalidate();
-            chartPanel.repaint();
+            chartPanel.updateChartData(prices, timestamps);
         });
     }
 
@@ -126,9 +117,9 @@ public class MainView extends JFrame {
 
     public void resetTable() {
         SwingUtilities.invokeLater(() -> {
-            tableModel.setRowCount(0); // テーブルのすべての行を削除
-            stockTable.revalidate();  // テーブルを再構築
-            stockTable.repaint();     // テーブルを再描画
+            tableModel.setRowCount(0);
+            stockTable.revalidate();
+            stockTable.repaint();
         });
     }
 
